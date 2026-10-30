@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Match ♡</title>
+
+<style>
+:root {
+  --bg: #fff0f5;
+  --card: #f3b6ce;
+  --accent: #df83aa;
+  --text: #a64d79;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.screen {
+  width: 100%;
+  max-width: 400px;
+  padding: 30px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 25px;
+  box-shadow: 0 8px 25px #0000000d;
+}
+
+.hidden {
+  display: none;
+}
+
+h1 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+p {
+  line-height: 1.6;
+}
+
+button, select {
+  font-family: inherit;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 14px;
+  background: var(--accent);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  filter: brightness(0.95);
+  transform: translateY(-2px);
+}
+
+.btn.secondary {
+  background: white;
+  color: var(--text);
+  border: 2px solid var(--card);
+}
+
+.themes {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 25px 0;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  border: 3px solid white;
+  outline: 2px solid transparent;
+  cursor: pointer;
+}
+
+.swatch.selected {
+  outline-color: var(--accent);
+  transform: scale(1.12);
+}
+
+.difficulty-option {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 15px;
+  border: 2px solid var(--card);
+  border-radius: 14px;
+  background: white;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.difficulty-option.selected {
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.difficulty-option strong,
+.difficulty-option small {
+  display: block;
+}
+
+.difficulty-option small {
+  margin-top: 5px;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+.game {
+  display: grid;
+  gap: 8px;
+  margin: 20px auto;
+}
+
+.card {
+  width: 100%;
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 10px;
+  background: var(--card);
+  font-size: clamp(20px, 6vw, 30px);
+  cursor: pointer;
+}
+
+.card.open,
+.card.matched {
+  background: white;
+}
+
+.card.matched {
+  outline: 2px solid var(--accent);
+}
+
+.card:disabled {
+  cursor: default;
+}
+
+#message {
+  font-weight: bold;
+  min-height: 24px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1: HOME -->
+<section id="home" class="screen">
+  <h1>Memory Match ♡</h1>
+  <p>Find the matching pairs!</p>
+  <p>Ready to test your memory?</p>
+  <button class="btn" onclick="showPage('colors')">
+    PLAY ♡
+  </button>
+</section>
+
+
+<!-- PAGE 2: COLOR SELECTION -->
+<section id="colors" class="screen hidden">
+  <h1>Choose Your Color</h1>
+  <p>Pick your favorite theme ౨ৎ</p>
+
+  <div class="themes">
+    <button class="swatch selected"
+      style="background:#f3b6ce"
+      data-theme="pink" aria-label="Pink"></button>
+
+    <button class="swatch"
+      style="background:#a8d8c8"
+      data-theme="mint" aria-label="Mint"></button>
+
+    <button class="swatch"
+      style="background:#b8c9f5"
+      data-theme="blue" aria-label="Blue"></button>
+
+    <button class="swatch"
+      style="background:#d0b5f0"
+      data-theme="purple" aria-label="Purple"></button>
+
+    <button class="swatch"
+      style="background:#f2c77c"
+      data-theme="yellow" aria-label="Yellow"></button>
+  </div>
+
+  <p id="colorName">Pink theme ♡</p>
+
+  <button class="btn" onclick="showPage('difficulty')">
+    NEXT →
+  </button>
+
+  <button class="btn secondary" onclick="showPage('home')">
+    ← BACK
+  </button>
+</section>
+
+
+<!-- PAGE 3: DIFFICULTY -->
+<section id="difficulty" class="screen hidden">
+  <h1>Choose Difficulty</h1>
+  <p>How good is your memory? ✧</p>
+
+  <button class="difficulty-option selected"
+    data-level="easy">
+    <strong>♡ Easy</strong>
+    <small>8 pairs · 16 cards</small>
+  </button>
+
+  <button class="difficulty-option"
+    data-level="normal">
+    <strong>♡ Normal</strong>
+    <small>12 pairs · 24 cards</small>
+  </button>
+
+  <button class="difficulty-option"
+    data-level="hard">
+    <strong>♡ Hard</strong>
+    <small>18 pairs · 36 cards</small>
+  </button>
+
+  <button class="btn" onclick="startGame()">
+    START GAME ✧
+  </button>
+
+  <button class="btn secondary" onclick="showPage('colors')">
+    ← BACK
+  </button>
+</section>
+
+
+<!-- PAGE 4: GAME -->
+<section id="gameScreen" class="screen hidden">
+  <h1>Memory Match ♡</h1>
+
+  <div class="game-info">
+    <span>Moves: <span id="moves">0</span></span>
+    <span>Time: <span id="time">0</span>s</span>
+  </div>
+
+  <div id="game" class="game"></div>
+  <p id="message"></p>
+
+  <button class="btn" onclick="startGame()">
+    PLAY AGAIN ↻
+  </button>
+
+  <button class="btn secondary"
+    onclick="showPage('home')">
+    HOME ⌂
+  </button>
+</section>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
